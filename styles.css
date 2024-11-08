@@ -1,0 +1,35 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  h1, h2 {
+    color: #333;
+  }
+  
+  .form-container {
+    margin-bottom: 20px;
+  }
+  
+  input[type="text"] {
+    padding: 10px;
+    width: 200px;
+    margin-right: 10px;
+  }
+  
+  button {
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  
+  #users-list .user-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  #users-list .user-item button {
+    margin-left: 5px;
+  }
+  

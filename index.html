@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD Operations with MockAPI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>MockAPI CRUD Operations (Users)</h1>
+  <div class="form-container">
+    <input type="text" id="name" placeholder="Enter user name">
+    <button onclick="createUser()">Add User</button>
+    <button onclick="updateUser()" id="update-button" style="display: none;">Update User</button>
+  </div>
+
+  <h2>Users List</h2>
+  <div id="users-list"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
