@@ -10,12 +10,14 @@
   <h1>MockAPI CRUD Operations (Users)</h1>
   <div class="form-container">
     <input type="text" id="name" placeholder="Enter user name">
-    <button onclick="createUser()">Add User</button>
-    <button onclick="updateUser()" id="update-button" style="display: none;">Update User</button>
+    <button id="create-button" onclick="createUser()">Add User</button>
+    <button onclick="updateUser()" id="update-button" style="display: none">Update User</button>
   </div>
 
   <h2>Users List</h2>
   <div id="users-list"></div>
+
+  
 
   <script src="script.js"></script>
 </body>

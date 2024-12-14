@@ -1,4 +1,4 @@
-const apiUrl = 'https://672dd967fd8979715643f2bd.mockapi.io/api/users/users';
+const apiUrl = 'http://localhost:5000/users';
 let currentUserId = null;
 
 // Fetch and display users
@@ -10,11 +10,11 @@ function fetchUsers() {
       usersList.innerHTML = '';
       users.forEach(user => {
         usersList.innerHTML += `
-          <div class="user-item" id="user-${user.id}">
+          <div class="user-item" id="user-${user._id}">
             <span>${user.name}</span>
             <div>
-              <button onclick="editUser(${user.id}, '${user.name}')">Edit</button>
-              <button onclick="deleteUser(${user.id})">Delete</button>
+              <button onclick="editUser('${user._id}', '${user.name}')">Edit</button>
+              <button onclick="deleteUser('${user._id}')">Delete</button>
             </div>
           </div>
         `;
@@ -45,15 +45,33 @@ function createUser() {
 
 // Edit an existing user (prefill form)
 function editUser(id, name) {
-  document.getElementById('name').value = name;
+  const nameInput = document.getElementById('name');
+  const updateButton = document.getElementById('update-button');
+  const createButton = document.getElementById('create-button');
+
+  if (!nameInput || !updateButton || !createButton) {
+    console.error('Required elements are missing in the DOM.');
+    return;
+  }
+
+  nameInput.value = name;
   currentUserId = id;
-  document.getElementById('update-button').style.display = 'inline';
+  updateButton.style.display = 'inline'; // Show the update button
+  createButton.style.display = 'none';  // Hide the create button
 }
 
 // Update the user with the specified ID
 function updateUser() {
   const nameInput = document.getElementById('name');
+  const updateButton = document.getElementById('update-button');
+  const createButton = document.getElementById('create-button');
   const updatedName = nameInput.value.trim();
+
+  if (!nameInput || !updateButton || !createButton) {
+    console.error('Required elements are missing in the DOM.');
+    return;
+  }
+
   if (!updatedName) return alert('Please enter a name.');
   if (!currentUserId) return alert('No user selected for updating.');
 
@@ -66,13 +84,13 @@ function updateUser() {
     .then(() => {
       nameInput.value = '';
       currentUserId = null;
-      document.getElementById('update-button').style.display = 'none';
+      updateButton.style.display = 'none'; // Hide the update button
+      createButton.style.display = 'inline'; // Show the create button
       fetchUsers();
       alert('User updated successfully!');
     })
     .catch(error => console.error('Error updating user:', error));
 }
-
 // Delete a user
 function deleteUser(id) {
   fetch(`${apiUrl}/${id}`, { method: 'DELETE' })
