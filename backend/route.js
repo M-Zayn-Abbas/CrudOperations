@@ -5,10 +5,15 @@ const cors = require('cors'); // Import CORS
 const User = require('./model')
 const cookieParser = require('cookie-parser');
 const session = require('express-session'); 
+const UserAuth = require('./user');
+const bcrypt = require('bcrypt')
+
 
 const port = 5000;
 
 const app = express()
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended : true}));
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -21,16 +26,8 @@ mongoose.connect('mongodb://localhost:27017/userManagement',  {
     .catch(err => console.error('Could not connect to MongoDB:', err));
 
     app.use(cookieParser());
-app.use(session({  // Initialize session middleware
-    secret: 'zayn1234',   // Secret for signing session cookies
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        maxAge: 1000 * 60 * 60,  // Session duration (1 hour)
-        httpOnly: true,          // Makes the cookie inaccessible to client-side JavaScript
-        secure: false,           // Set to true if using HTTPS
-      },
-}));
+app.use(session({  
+    secret: 'zayn1234'}));
 
 // Middleware to check for admin access based on query parameter
 function isAdmin(req, res, next) {
@@ -40,6 +37,56 @@ function isAdmin(req, res, next) {
         return res.status(403).send('Not an Admin');
     }
 }
+
+app.get('/register', (req,res)=>{
+    res.render('register');
+})
+
+app.get('/login', (req,res)=>{
+    res.render('login');
+})
+
+app.post('/login', async (req,res)=>{
+    const {username, password} = req.body;
+    const userAuth = await UserAuth.findOne({ username })
+    const validPassword = await bcrypt.compare(password, userAuth.password)
+    if(validPassword){
+        req.session.user_id = userAuth._id;
+        res.redirect('/secret')
+    }else{
+        res.redirect('/login')
+    }
+})
+
+app.post('/logout',(req,res) =>{
+    req.session.user_id = null;
+    res.redirect('/login');
+})
+
+app.get('/', (req,res)=>{
+    res.send('home page');
+})
+
+app.post('/register',async (req,res)=>{
+    const {password, username} = req.body;
+        const hash = await bcrypt.hash(password, 12);
+        const userAuth = new UserAuth ({
+            username,
+            password: hash
+        })
+        await userAuth.save();
+        req.session.user_id = userAuth._id;
+        res.redirect('/')
+})
+
+app.get('/secret',(req,res)=>{
+    if(!req.session.user_id){
+       return res.redirect('/login')
+    }
+
+    res.render('secret');
+
+})
 
 // Route to check the admin status (testing purpose)
 app.get('/admin', isAdmin, (req, res) => {
